@@ -1,0 +1,8 @@
+package: vth.example.example
+label: Example
+repository: https://github.com/azarc-io/action-module-scrape.git
+description: An example module
+icon: ""
+preview_images: []
+tags:
+  - example
