@@ -4,6 +4,7 @@ type (
 	Module struct {
 		Config ModuleConfig
 		Sparks []*Spark
+		Readme []byte
 	}
 
 	ModuleConfig struct {
@@ -17,6 +18,7 @@ type (
 
 	Spark struct {
 		Config      SparkConfig
+		Readme      []byte
 		InputSchema []byte
 	}
 

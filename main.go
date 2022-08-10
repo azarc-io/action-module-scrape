@@ -10,6 +10,7 @@ import (
 
 const (
 	sparksRoot = "sparks"
+	readme     = "readme.md"
 )
 
 func main() {
@@ -17,6 +18,7 @@ func main() {
 
 	module := Module{Config: ModuleConfig{}}
 	parseYaml(action, "module.yaml", &module.Config)
+	module.Readme = readFile(action, readme)
 
 	files, err := ioutil.ReadDir(sparksRoot)
 	if err != nil {
@@ -34,29 +36,29 @@ func main() {
 		sparkRoot := fmt.Sprintf("%s/%s", sparksRoot, dir.Name())
 		parseYaml(action, fmt.Sprintf("%s/%s", sparkRoot, "spark.yaml"), &spark.Config)
 		loadSchema(action, fmt.Sprintf("%s/%s", sparkRoot, "input_schema.json"), &spark.InputSchema)
-
-		fmt.Println(spark)
+		spark.Readme = readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))
 	}
+	fmt.Println(module)
 }
 
-func parseYaml(action *ga.Action, file string, v interface{}) {
+func readFile(action *ga.Action, file string) []byte {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		action.Fatalf("reading file %s", err.Error())
 	}
-	if err = yaml.Unmarshal(data, v); err != nil {
+	return data
+}
+
+func parseYaml(action *ga.Action, file string, v interface{}) {
+	data := readFile(action, file)
+	if err := yaml.Unmarshal(data, v); err != nil {
 		action.Fatalf("unmarshal file %s", err.Error())
 	}
 }
 
 func loadSchema(action *ga.Action, file string, v *[]byte) {
-	var err error
-	*v, err = ioutil.ReadFile(file)
-	if err != nil {
-		action.Fatalf("reading file %s", err.Error())
-	}
-	_, err = gojsonschema.NewSchema(gojsonschema.NewBytesLoader(*v))
-	if err != nil {
+	*v = readFile(action, file)
+	if _, err := gojsonschema.NewSchema(gojsonschema.NewBytesLoader(*v)); err != nil {
 		action.Fatalf("loading schema %s", err.Error())
 	}
 }
