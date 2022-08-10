@@ -7,14 +7,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Download Go modules
+    - name: "Scrape"
       shell: bash
-      run: go mod download
       working-directory: ${{ github.action_path }}
-
-    - name: Build go project
-      shell: bash
-      run: go build
-      working-directory: ${{ github.action_path }}
-#      env:
-#        INPUT_VERSION: ${{ inputs.version }}
+      run: ./dist/$(echo "${{runner.os}}" | tr "[:upper:]" "[:lower:]")
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
