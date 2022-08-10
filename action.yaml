@@ -11,4 +11,7 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
-        
+        echo "version ${{ inputs.version }}" >> $GITHUB_STEP_SUMMARY
+        ./dist/$(echo "${{runner.os}}" | tr "[:upper:]" "[:lower:]")
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
