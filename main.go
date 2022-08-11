@@ -38,6 +38,7 @@ func main() {
 		loadSchema(action, fmt.Sprintf("%s/%s", sparkRoot, "input_schema.json"), &spark.InputSchema)
 		spark.Readme = readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))
 	}
+	action.Infof("Scraped %d sparks", len(module.Sparks))
 }
 
 func readFile(action *ga.Action, file string) []byte {
