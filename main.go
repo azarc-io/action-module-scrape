@@ -6,6 +6,7 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"path"
 )
 
 const (
@@ -15,9 +16,11 @@ const (
 
 func main() {
 	action := ga.New()
+	workspace := action.Getenv("GITHUB_WORKSPACE")
 
 	module := Module{Config: ModuleConfig{}}
-	parseYaml(action, "module.yaml", &module.Config)
+
+	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &module.Config)
 	module.Readme = readFile(action, readme)
 
 	files, err := ioutil.ReadDir(sparksRoot)
@@ -33,12 +36,13 @@ func main() {
 		spark := Spark{}
 		module.Sparks = append(module.Sparks, &spark)
 
+		path.Join()
 		sparkRoot := fmt.Sprintf("%s/%s", sparksRoot, dir.Name())
 		parseYaml(action, fmt.Sprintf("%s/%s", sparkRoot, "spark.yaml"), &spark.Config)
 		loadSchema(action, fmt.Sprintf("%s/%s", sparkRoot, "input_schema.json"), &spark.InputSchema)
 		spark.Readme = readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))
 	}
-	action.Infof("Scraped %d sparks", len(module.Sparks))
+	action.Infof("scraped %d sparks", len(module.Sparks))
 }
 
 func readFile(action *ga.Action, file string) []byte {
