@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	sparksRoot = "sparks"
-	readme     = "readme.md"
+	readme = "readme.md"
 )
 
 func main() {
@@ -23,6 +22,7 @@ func main() {
 	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &module.Config)
 	module.Readme = readFile(action, readme)
 
+	sparksRoot := fmt.Sprintf("%s/sparks", workspace)
 	files, err := ioutil.ReadDir(sparksRoot)
 	if err != nil {
 		action.Fatalf("listing sparks", err.Error())
