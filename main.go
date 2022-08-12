@@ -59,6 +59,7 @@ func main() {
 	if resp.StatusCode != http.StatusOK {
 		action.Fatalf("received %d from add module request", resp.StatusCode)
 	}
+	action.Infof("scraped and submitted module with %d sparks", len(module.Sparks))
 
 	//ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	//conn, err := grpc.DialContext(ctx, ":443", grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
