@@ -1,9 +1,5 @@
 name: 'VTH module scraper'
 description: 'Upsert a vth module from scraped info'
-inputs:
-  version:
-    description: 'The version number to set in the helm values'
-    required: true
 runs:
   using: composite
   steps:
