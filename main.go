@@ -26,18 +26,20 @@ func main() {
 
 	request := &v1.AddModuleRequest{
 		Module: &v1.Module{
-			Config:  &v1.ModuleConfig{},
-			Repo:    action.Getenv("GITHUB_REPOSITORY"),
-			Version: action.Getenv("GITHUB_REF"),
-			Readme:  readFile(action, readme),
+			Config: &v1.ModuleConfig{},
+			Repo:   action.Getenv("GITHUB_REPOSITORY"),
+			Readme: readFile(action, readme),
 		},
+	}
+	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", request.Module.Version); err != nil {
+		action.Fatalf("getting version: %s", err.Error())
 	}
 	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &request.Module.Config)
 
 	sparksRoot := fmt.Sprintf("%s/sparks", workspace)
 	files, err := ioutil.ReadDir(sparksRoot)
 	if err != nil {
-		action.Fatalf("listing sparks", err.Error())
+		action.Fatalf("listing sparks: %s", err.Error())
 	}
 
 	for _, dir := range files {
