@@ -31,7 +31,7 @@ func main() {
 			Readme: readFile(action, readme),
 		},
 	}
-	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", request.Module.Version); err != nil {
+	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", &request.Module.Version); err != nil {
 		action.Fatalf("getting version: %s", err.Error())
 	}
 	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &request.Module.Config)
