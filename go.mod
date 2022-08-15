@@ -3,7 +3,7 @@ module github.com/azarc-io/action-module-scrape
 go 1.18
 
 require (
-	github.com/azarc-io/verathread-global v1.24.0
+	github.com/azarc-io/verathread-global v1.25.0
 	github.com/sethvargo/go-githubactions v1.0.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 	gopkg.in/yaml.v2 v2.4.0

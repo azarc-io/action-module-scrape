@@ -8,6 +8,8 @@ github.com/azarc-io/verathread-global v1.22.0 h1:Fok5DTqC71HHYXKaUEEUlPD+WX6KOuo
 github.com/azarc-io/verathread-global v1.22.0/go.mod h1:DSXoou0qN69mXJK5aYHvkj/y0sgB2Oe8eR59LtWSiH8=
 github.com/azarc-io/verathread-global v1.24.0 h1:DY9vNvZcA/LhU9SsAwJNEr1hFx5dP+Odc8rvXnOEG4o=
 github.com/azarc-io/verathread-global v1.24.0/go.mod h1:DSXoou0qN69mXJK5aYHvkj/y0sgB2Oe8eR59LtWSiH8=
+github.com/azarc-io/verathread-global v1.25.0 h1:k058IVw9nsu8Rfyb3L1NqSgBoWv2QoAWRR3LbCBbzrU=
+github.com/azarc-io/verathread-global v1.25.0/go.mod h1:DSXoou0qN69mXJK5aYHvkj/y0sgB2Oe8eR59LtWSiH8=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
