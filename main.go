@@ -7,7 +7,7 @@ import (
 	"github.com/azarc-io/action-module-scrape/temp/module_v1"
 	ga "github.com/sethvargo/go-githubactions"
 	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"net/http"
 )
