@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	v1 "github.com/azarc-io/verathread-global/api/v1"
+	"github.com/azarc-io/action-module-scrape/temp/module_v1"
 	ga "github.com/sethvargo/go-githubactions"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v2"
@@ -24,17 +24,16 @@ func main() {
 
 	workspace := action.Getenv("GITHUB_WORKSPACE")
 
-	request := &v1.AddModuleRequest{
-		Module: &v1.Module{
-			Config: &v1.ModuleConfig{},
+	cmd := &module_v1.CreateCommand{
+		Module: &module_v1.Module{
 			Repo:   action.Getenv("GITHUB_REPOSITORY"),
 			Readme: readFile(action, readme),
 		},
 	}
-	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", &request.Module.Version); err != nil {
+	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", &cmd.Module.Version); err != nil {
 		action.Fatalf("getting version: %s", err.Error())
 	}
-	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &request.Module.Config)
+	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &cmd.Module)
 
 	sparksRoot := fmt.Sprintf("%s/sparks", workspace)
 	files, err := ioutil.ReadDir(sparksRoot)
@@ -48,14 +47,14 @@ func main() {
 		}
 
 		sparkRoot := fmt.Sprintf("%s/%s", sparksRoot, dir.Name())
-		spark := v1.Spark{Readme: readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))}
-		parseYaml(action, fmt.Sprintf("%s/%s", sparkRoot, "spark.yaml"), &spark.Config)
+		spark := module_v1.Spark{Readme: readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))}
+		parseYaml(action, fmt.Sprintf("%s/%s", sparkRoot, "spark.yaml"), &spark)
 		loadSchema(action, fmt.Sprintf("%s/%s", sparkRoot, "input_schema.json"), &spark.InputSchema)
-		request.Sparks = append(request.Sparks, &spark)
+		cmd.Sparks = append(cmd.Sparks, &spark)
 	}
 
 	buf := &bytes.Buffer{}
-	if err = json.NewEncoder(buf).Encode(request); err != nil {
+	if err = json.NewEncoder(buf).Encode(cmd); err != nil {
 		action.Fatalf("could not encode module: %s", err.Error())
 	}
 	resp, err := http.Post("https://auth-events.cloud.azarc.dev/api/v1/module", "application/json", buf)
@@ -66,7 +65,7 @@ func main() {
 		action.Fatalf("received %d from add module request", resp.StatusCode)
 	}
 	action.Infof("scraped and submitted for module [repo]: %s, [version]: %s, [sparks]: %d",
-		request.Module.Repo, request.Module.Version, len(request.Sparks))
+		cmd.Module.Repo, cmd.Module.Version, len(cmd.Sparks))
 
 	//ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	//conn, err := grpc.DialContext(ctx, ":443", grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))

@@ -1,0 +1,11 @@
+syntax = "proto3";
+package module_v1;
+option go_package = "github.com/azarc-io/verathread/internal/domain/module/api/v1;module_v1";
+
+import "internal/domain/module/api/v1/model.proto";
+import "validate/validate.proto";
+
+message CreateCommand {
+  Module module = 1 [(validate.rules).message.required = true];
+  repeated Spark sparks = 2;
+}
