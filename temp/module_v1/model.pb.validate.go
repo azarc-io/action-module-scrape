@@ -35,6 +35,134 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on Spark with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Spark) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Spark with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in SparkMultiError, or nil if none found.
+func (m *Spark) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Spark) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Readme
+
+	// no validation rules for InputSchema
+
+	if utf8.RuneCountInString(m.GetLabel()) < 1 {
+		err := SparkValidationError{
+			field:  "Label",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetDescription()) < 1 {
+		err := SparkValidationError{
+			field:  "Description",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Icon
+
+	if len(errors) > 0 {
+		return SparkMultiError(errors)
+	}
+
+	return nil
+}
+
+// SparkMultiError is an error wrapping multiple validation errors returned by
+// Spark.ValidateAll() if the designated constraints aren't met.
+type SparkMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SparkMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SparkMultiError) AllErrors() []error { return m }
+
+// SparkValidationError is the validation error returned by Spark.Validate if
+// the designated constraints aren't met.
+type SparkValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SparkValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SparkValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SparkValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SparkValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SparkValidationError) ErrorName() string { return "SparkValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SparkValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSpark.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SparkValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SparkValidationError{}
+
 // Validate checks the field values on DetailEntity with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -57,12 +185,18 @@ func (m *DetailEntity) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
+	// no validation rules for Repo
+
+	// no validation rules for Version
+
 	if all {
-		switch v := interface{}(m.GetModule()).(type) {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, DetailEntityValidationError{
-					field:  "Module",
+					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -70,21 +204,60 @@ func (m *DetailEntity) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, DetailEntityValidationError{
-					field:  "Module",
+					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetModule()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return DetailEntityValidationError{
-				field:  "Module",
+				field:  "CreatedAt",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
 	}
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DetailEntityValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DetailEntityValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DetailEntityValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for AggregateVersion
+
+	// no validation rules for Readme
+
+	// no validation rules for Label
+
+	// no validation rules for Description
+
+	// no validation rules for Icon
 
 	for idx, item := range m.GetSparks() {
 		_, _ = idx, item
@@ -197,282 +370,6 @@ var _ interface {
 	ErrorName() string
 } = DetailEntityValidationError{}
 
-// Validate checks the field values on Module with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Module) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Module with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in ModuleMultiError, or nil if none found.
-func (m *Module) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Module) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Repo
-
-	// no validation rules for Version
-
-	// no validation rules for Readme
-
-	if utf8.RuneCountInString(m.GetPackage()) < 1 {
-		err := ModuleValidationError{
-			field:  "Package",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetLabel()) < 1 {
-		err := ModuleValidationError{
-			field:  "Label",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetDescription()) < 1 {
-		err := ModuleValidationError{
-			field:  "Description",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Icon
-
-	if len(m.GetTags()) < 1 {
-		err := ModuleValidationError{
-			field:  "Tags",
-			reason: "value must contain at least 1 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return ModuleMultiError(errors)
-	}
-
-	return nil
-}
-
-// ModuleMultiError is an error wrapping multiple validation errors returned by
-// Module.ValidateAll() if the designated constraints aren't met.
-type ModuleMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ModuleMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ModuleMultiError) AllErrors() []error { return m }
-
-// ModuleValidationError is the validation error returned by Module.Validate if
-// the designated constraints aren't met.
-type ModuleValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ModuleValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ModuleValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ModuleValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ModuleValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ModuleValidationError) ErrorName() string { return "ModuleValidationError" }
-
-// Error satisfies the builtin error interface
-func (e ModuleValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sModule.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ModuleValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ModuleValidationError{}
-
-// Validate checks the field values on Spark with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Spark) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Spark with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in SparkMultiError, or nil if none found.
-func (m *Spark) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Spark) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Readme
-
-	// no validation rules for InputSchema
-
-	if utf8.RuneCountInString(m.GetLabel()) < 1 {
-		err := SparkValidationError{
-			field:  "Label",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetDescription()) < 1 {
-		err := SparkValidationError{
-			field:  "Description",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Icon
-
-	if len(errors) > 0 {
-		return SparkMultiError(errors)
-	}
-
-	return nil
-}
-
-// SparkMultiError is an error wrapping multiple validation errors returned by
-// Spark.ValidateAll() if the designated constraints aren't met.
-type SparkMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SparkMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SparkMultiError) AllErrors() []error { return m }
-
-// SparkValidationError is the validation error returned by Spark.Validate if
-// the designated constraints aren't met.
-type SparkValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SparkValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SparkValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SparkValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SparkValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SparkValidationError) ErrorName() string { return "SparkValidationError" }
-
-// Error satisfies the builtin error interface
-func (e SparkValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSpark.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SparkValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SparkValidationError{}
-
 // Validate checks the field values on MasterEntity with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -495,15 +392,79 @@ func (m *MasterEntity) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	// no validation rules for Repo
 
 	// no validation rules for Version
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MasterEntityValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MasterEntityValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MasterEntityValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MasterEntityValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MasterEntityValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MasterEntityValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for AggregateVersion
 
 	// no validation rules for Label
 
 	// no validation rules for Description
 
 	// no validation rules for Icon
+
+	// no validation rules for Sparks
 
 	if len(errors) > 0 {
 		return MasterEntityMultiError(errors)

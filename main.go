@@ -24,16 +24,13 @@ func main() {
 
 	workspace := action.Getenv("GITHUB_WORKSPACE")
 
-	cmd := &module_v1.CreateCommand{
-		Module: &module_v1.Module{
-			Repo:   action.Getenv("GITHUB_REPOSITORY"),
-			Readme: readFile(action, readme),
-		},
-	}
-	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", &cmd.Module.Version); err != nil {
+	cmd := &module_v1.CreateAction{}
+	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &cmd.Module)
+	cmd.Repo = action.Getenv("GITHUB_REPOSITORY")
+	cmd.Module.Readme = readFile(action, readme)
+	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", &cmd.Version); err != nil {
 		action.Fatalf("getting version: %s", err.Error())
 	}
-	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &cmd.Module)
 
 	sparksRoot := fmt.Sprintf("%s/sparks", workspace)
 	files, err := ioutil.ReadDir(sparksRoot)
@@ -47,8 +44,10 @@ func main() {
 		}
 
 		sparkRoot := fmt.Sprintf("%s/%s", sparksRoot, dir.Name())
-		spark := module_v1.Spark{Readme: readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))}
+		spark := module_v1.Spark{}
 		parseYaml(action, fmt.Sprintf("%s/%s", sparkRoot, "spark.yaml"), &spark)
+		spark.Name = dir.Name()
+		spark.Readme = readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))
 		loadSchema(action, fmt.Sprintf("%s/%s", sparkRoot, "input_schema.json"), &spark.InputSchema)
 		cmd.Sparks = append(cmd.Sparks, &spark)
 	}
@@ -65,7 +64,7 @@ func main() {
 		action.Fatalf("received %d from add module request", resp.StatusCode)
 	}
 	action.Infof("scraped and submitted for module [repo]: %s, [version]: %s, [sparks]: %d",
-		cmd.Module.Repo, cmd.Module.Version, len(cmd.Sparks))
+		cmd.Repo, cmd.Version, len(cmd.Sparks))
 
 	//ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	//conn, err := grpc.DialContext(ctx, ":443", grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
