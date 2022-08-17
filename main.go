@@ -5,10 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/azarc-io/action-module-scrape/temp/module_v1"
-	ga "github.com/sethvargo/go-githubactions"
-	"github.com/xeipuuv/gojsonschema"
-	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"github.com/azarc-io/action-module-scrape/util"
+	"github.com/sethvargo/go-githubactions"
 	"net/http"
 )
 
@@ -17,85 +15,104 @@ const (
 )
 
 func main() {
-	action := ga.New()
-	if action.Getenv("GITHUB_REF_TYPE") != "tag" {
-		action.Fatalf("module scrape can only be used on push tag")
+	gitAction, action, path := loadAction()
+	action.Module = loadModule(gitAction, path)
+	action.Sparks = loadSparks(gitAction, path)
+	action.Connectors = loadConnectors(gitAction, path)
+	submitAction(gitAction, action)
+}
+
+//********************************************************************************************
+// ACTION
+//********************************************************************************************
+
+func loadAction() (*githubactions.Action, *module_v1.Action, string) {
+	gitAction := githubactions.New()
+	if gitAction.Getenv("GITHUB_REF_TYPE") != "tag" {
+		gitAction.Fatalf("module scrape can only be used on push tag")
 	}
 
-	workspace := action.Getenv("GITHUB_WORKSPACE")
-
-	cmd := &module_v1.CreateAction{}
-	parseYaml(action, fmt.Sprintf("%s/module.yaml", workspace), &cmd.Module)
-	cmd.Repo = action.Getenv("GITHUB_REPOSITORY")
-	cmd.Module.Readme = readFile(action, readme)
-	if _, err := fmt.Sscanf(action.Getenv("GITHUB_REF"), "refs/tags/%s", &cmd.Version); err != nil {
-		action.Fatalf("getting version: %s", err.Error())
+	action := &module_v1.Action{Repo: gitAction.Getenv("GITHUB_REPOSITORY")}
+	if _, err := fmt.Sscanf(gitAction.Getenv("GITHUB_REF"), "refs/tags/%s", &action.Version); err != nil {
+		gitAction.Fatalf("getting version: %s", err.Error())
 	}
+	return gitAction, action, gitAction.Getenv("GITHUB_WORKSPACE")
+}
 
-	sparksRoot := fmt.Sprintf("%s/sparks", workspace)
-	files, err := ioutil.ReadDir(sparksRoot)
-	if err != nil {
-		action.Fatalf("listing sparks: %s", err.Error())
-	}
-
-	for _, dir := range files {
-		if !dir.IsDir() {
-			continue
-		}
-
-		sparkRoot := fmt.Sprintf("%s/%s", sparksRoot, dir.Name())
-		spark := module_v1.Spark{}
-		parseYaml(action, fmt.Sprintf("%s/%s", sparkRoot, "spark.yaml"), &spark)
-		spark.Name = dir.Name()
-		spark.Readme = readFile(action, fmt.Sprintf("%s/%s", sparkRoot, readme))
-		loadSchema(action, fmt.Sprintf("%s/%s", sparkRoot, "input_schema.json"), &spark.InputSchema)
-		cmd.Sparks = append(cmd.Sparks, &spark)
+func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
+	if err := action.Validate(); err != nil {
+		gitAction.Fatalf("action validation failed: %s", err.Error())
 	}
 
 	buf := &bytes.Buffer{}
-	if err = json.NewEncoder(buf).Encode(cmd); err != nil {
-		action.Fatalf("could not encode module: %s", err.Error())
+	if err := json.NewEncoder(buf).Encode(action); err != nil {
+		gitAction.Fatalf("could not encode module: %s", err.Error())
 	}
 	resp, err := http.Post("https://auth-events.cloud.azarc.dev/api/v1/module", "application/json", buf)
 	if err != nil {
-		action.Fatalf("could not add module: %s", err.Error())
+		gitAction.Fatalf("could not add module: %s", err.Error())
 	}
 	if resp.StatusCode != http.StatusOK {
-		action.Fatalf("received %d from add module request", resp.StatusCode)
+		gitAction.Fatalf("received %d from add module request", resp.StatusCode)
 	}
-	action.Infof("scraped and submitted for module [repo]: %s, [version]: %s, [sparks]: %d",
-		cmd.Repo, cmd.Version, len(cmd.Sparks))
-
-	//ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	//conn, err := grpc.DialContext(ctx, ":443", grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	//if err != nil {
-	//	action.Fatalf("could not dail verathread: %s", err.Error())
-	//}
-	//fmt.Println("connected")
-	//client := v1.NewModuleSupportClient(conn)
-	//if _, err = client.AddModule(ctx, &v1.AddModuleRequest{Module: module}); err != nil {
-	//	action.Fatalf("could not upload module: %s", err.Error())
-	//}
+	gitAction.Infof("scraped and submitted for module [repo]: %s, [version]: %s, [sparks]: %d",
+		action.Repo, action.Version, len(action.Sparks))
 }
 
-func readFile(action *ga.Action, file string) []byte {
-	data, err := ioutil.ReadFile(file)
-	if err != nil {
-		action.Fatalf("reading file: %s", err.Error())
-	}
-	return data
+//********************************************************************************************
+// MODULE
+//********************************************************************************************
+
+func loadModule(gitAction *githubactions.Action, path string) *module_v1.Module {
+	module := &module_v1.Module{}
+	util.ParseYaml(gitAction, fmt.Sprintf("%s/module.yaml", path), &module)
+	module.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path))
+	module.Readme = util.ReadFile(gitAction, readme)
+	module.Licence = util.ReadFile(gitAction, fmt.Sprintf("%s/licence.txt", path))
+	return module
 }
 
-func parseYaml(action *ga.Action, file string, v interface{}) {
-	data := readFile(action, file)
-	if err := yaml.Unmarshal(data, v); err != nil {
-		action.Fatalf("unmarshal file: %s", err.Error())
+//********************************************************************************************
+// SPARK
+//********************************************************************************************
+
+func loadSpark(gitAction *githubactions.Action, sparks []*module_v1.Spark) func(string, string) {
+	return func(path, name string) {
+		spark := module_v1.Spark{}
+		util.ParseYaml(gitAction, fmt.Sprintf("%s/%s", path, "spark.yaml"), &spark)
+		spark.Name = name
+		spark.Readme = util.ReadFile(gitAction, fmt.Sprintf("%s/%s", path, readme))
+		spark.InputSchema = util.LoadSchema(gitAction, fmt.Sprintf("%s/%s", path, "input_schema.json"))
+		spark.OutputSchema = util.LoadSchema(gitAction, fmt.Sprintf("%s/%s", path, "output_schema.json"))
+		spark.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path))
+		sparks = append(sparks, &spark)
 	}
 }
 
-func loadSchema(action *ga.Action, file string, v *[]byte) {
-	*v = readFile(action, file)
-	if _, err := gojsonschema.NewSchema(gojsonschema.NewBytesLoader(*v)); err != nil {
-		action.Fatalf("loading schema: %s", err.Error())
+func loadSparks(gitAction *githubactions.Action, path string) []*module_v1.Spark {
+	var sparks []*module_v1.Spark
+	util.LoadDirs(gitAction, fmt.Sprintf("%s/sparks", path), loadSpark(gitAction, sparks))
+	return sparks
+}
+
+//********************************************************************************************
+// CONNECTOR
+//********************************************************************************************
+
+func loadConnector(gitAction *githubactions.Action, connectors []*module_v1.Connector) func(string, string) {
+	return func(path, name string) {
+		connector := module_v1.Connector{}
+		util.ParseYaml(gitAction, fmt.Sprintf("%s/%s", path, "connector.yaml"), &connector)
+		connector.Name = name
+		connector.Readme = util.ReadFile(gitAction, fmt.Sprintf("%s/%s", path, readme))
+		connector.Schema = util.LoadSchema(gitAction, fmt.Sprintf("%s/%s", path, "schema.json"))
+		connector.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path))
+		connectors = append(connectors, &connector)
 	}
+}
+
+func loadConnectors(gitAction *githubactions.Action, path string) []*module_v1.Connector {
+	var connectors []*module_v1.Connector
+	util.LoadDirs(gitAction, fmt.Sprintf("%s/connectors", path), loadConnector(gitAction, connectors))
+	return connectors
 }
