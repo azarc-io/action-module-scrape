@@ -66,9 +66,9 @@ func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
 func loadModule(gitAction *githubactions.Action, path string) *module_v1.Module {
 	module := &module_v1.Module{}
 	util.ParseYaml(gitAction, fmt.Sprintf("%s/module.yaml", path), &module)
-	module.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path))
-	module.Readme = util.ReadFile(gitAction, readme)
-	module.Licence = util.ReadFile(gitAction, fmt.Sprintf("%s/licence.txt", path))
+	module.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path), false)
+	module.Readme = util.LoadFile(gitAction, readme, false)
+	module.Licence = util.LoadFile(gitAction, fmt.Sprintf("%s/licence.txt", path), false)
 	return module
 }
 
@@ -81,10 +81,10 @@ func loadSpark(gitAction *githubactions.Action, sparks []*module_v1.Spark) func(
 		spark := module_v1.Spark{}
 		util.ParseYaml(gitAction, fmt.Sprintf("%s/%s", path, "spark.yaml"), &spark)
 		spark.Name = name
-		spark.Readme = util.ReadFile(gitAction, fmt.Sprintf("%s/%s", path, readme))
+		spark.Readme = util.LoadFile(gitAction, fmt.Sprintf("%s/%s", path, readme), false)
 		spark.InputSchema = util.LoadSchema(gitAction, fmt.Sprintf("%s/%s", path, "input_schema.json"))
 		spark.OutputSchema = util.LoadSchema(gitAction, fmt.Sprintf("%s/%s", path, "output_schema.json"))
-		spark.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path))
+		spark.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path), false)
 		sparks = append(sparks, &spark)
 	}
 }
@@ -104,9 +104,9 @@ func loadConnector(gitAction *githubactions.Action, connectors []*module_v1.Conn
 		connector := module_v1.Connector{}
 		util.ParseYaml(gitAction, fmt.Sprintf("%s/%s", path, "connector.yaml"), &connector)
 		connector.Name = name
-		connector.Readme = util.ReadFile(gitAction, fmt.Sprintf("%s/%s", path, readme))
+		connector.Readme = util.LoadFile(gitAction, fmt.Sprintf("%s/%s", path, readme), false)
 		connector.Schema = util.LoadSchema(gitAction, fmt.Sprintf("%s/%s", path, "schema.json"))
-		connector.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path))
+		connector.Icon = util.LoadImage(gitAction, fmt.Sprintf("%s/icon", path), false)
 		connectors = append(connectors, &connector)
 	}
 }

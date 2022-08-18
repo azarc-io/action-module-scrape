@@ -12,6 +12,7 @@ import (
 	_ "image/png"
 	"io/ioutil"
 	"os"
+	"syscall"
 )
 
 const maxImageSize = 500000
@@ -20,34 +21,9 @@ type Logger interface {
 	Fatalf(msg string, args ...any)
 }
 
-func LoadImage(log Logger, file string) string {
-	fp, err := os.Open(file)
-	if err != nil {
-		log.Fatalf("opening file: %s", err)
-	}
-	defer func() {
-		if err = fp.Close(); err != nil {
-			log.Fatalf("could not close %s: %s", file, err.Error())
-		}
-	}()
-
-	cfg, tp, err := image.DecodeConfig(fp)
-	if err != nil {
-		if !errors.Is(err, image.ErrFormat) {
-			log.Fatalf("error loading %s: %s", file, err)
-		}
-
-		buf := ReadFile(log, file)
-		if !svg.IsSVG(buf) {
-			log.Fatalf("%s uses an unsupported image format", file)
-		}
-		return fmt.Sprintf("data:image/svg+xml;base64, %s", base64.StdEncoding.EncodeToString(buf))
-	}
-	if cfg.Width*cfg.Height > maxImageSize {
-		log.Fatalf("error loading %s's HxW cannot exceed %d", file, maxImageSize)
-	}
-	return fmt.Sprintf("data:image/%s;base64, %s", tp, base64.StdEncoding.EncodeToString(ReadFile(log, file)))
-}
+//********************************************************************************************
+// FILE
+//********************************************************************************************
 
 func LoadDirs(log Logger, path string, cb func(path, name string)) {
 	dirs, err := ioutil.ReadDir(path)
@@ -62,25 +38,72 @@ func LoadDirs(log Logger, path string, cb func(path, name string)) {
 	}
 }
 
-func ReadFile(log Logger, file string) []byte {
+func LoadFile(log Logger, file string, mustLoad bool) []byte {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
+		if !mustLoad && errors.Is(err, syscall.ENOENT) {
+			return nil
+		}
 		log.Fatalf("reading file: %s", err.Error())
 	}
 	return data
 }
 
+//********************************************************************************************
+// YAML
+//********************************************************************************************
+
 func ParseYaml(log Logger, file string, v interface{}) {
-	data := ReadFile(log, file)
+	data := LoadFile(log, file, true)
 	if err := yaml.Unmarshal(data, v); err != nil {
 		log.Fatalf("unmarshal file: %s", err.Error())
 	}
 }
 
+//********************************************************************************************
+// SCHEMA
+//********************************************************************************************
+
 func LoadSchema(log Logger, file string) []byte {
-	v := ReadFile(log, file)
+	v := LoadFile(log, file, true)
 	if _, err := gojsonschema.NewSchema(gojsonschema.NewBytesLoader(v)); err != nil {
 		log.Fatalf("loading schema: %s", err.Error())
 	}
 	return v
+}
+
+//********************************************************************************************
+// IMAGE
+//********************************************************************************************
+
+func LoadImage(log Logger, file string, mustLoad bool) string {
+	fp, err := os.Open(file)
+	if err != nil {
+		if !mustLoad && errors.Is(err, syscall.ENOENT) {
+			return ""
+		}
+		log.Fatalf("opening file: %s", err)
+	}
+	defer func() {
+		if err = fp.Close(); err != nil {
+			log.Fatalf("could not close %s: %s", file, err.Error())
+		}
+	}()
+
+	cfg, tp, err := image.DecodeConfig(fp)
+	if err != nil {
+		if !errors.Is(err, image.ErrFormat) {
+			log.Fatalf("error loading %s: %s", file, err)
+		}
+
+		buf := LoadFile(log, file, true)
+		if !svg.IsSVG(buf) {
+			log.Fatalf("%s uses an unsupported image format", file)
+		}
+		return fmt.Sprintf("data:image/svg+xml;base64, %s", base64.StdEncoding.EncodeToString(buf))
+	}
+	if cfg.Width*cfg.Height > maxImageSize {
+		log.Fatalf("error loading %s's HxW cannot exceed %d", file, maxImageSize)
+	}
+	return fmt.Sprintf("data:image/%s;base64, %s", tp, base64.StdEncoding.EncodeToString(LoadFile(log, file, true)))
 }
