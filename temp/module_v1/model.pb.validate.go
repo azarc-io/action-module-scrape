@@ -35,6 +35,108 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on Image with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Image) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Image with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ImageMultiError, or nil if none found.
+func (m *Image) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Image) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Encoding
+
+	// no validation rules for Data
+
+	if len(errors) > 0 {
+		return ImageMultiError(errors)
+	}
+
+	return nil
+}
+
+// ImageMultiError is an error wrapping multiple validation errors returned by
+// Image.ValidateAll() if the designated constraints aren't met.
+type ImageMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ImageMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ImageMultiError) AllErrors() []error { return m }
+
+// ImageValidationError is the validation error returned by Image.Validate if
+// the designated constraints aren't met.
+type ImageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ImageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ImageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ImageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ImageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ImageValidationError) ErrorName() string { return "ImageValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ImageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sImage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ImageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ImageValidationError{}
+
 // Validate checks the field values on Module with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -55,6 +157,39 @@ func (m *Module) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if utf8.RuneCountInString(m.GetPackage()) < 1 {
+		err := ModuleValidationError{
+			field:  "Package",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_Module_Version_Pattern.MatchString(m.GetVersion()) {
+		err := ModuleValidationError{
+			field:  "Version",
+			reason: "value does not match regex pattern \"v[0-9]+.[0-9]+.[0-9]+\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetRepo()) < 1 {
+		err := ModuleValidationError{
+			field:  "Repo",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Readme
 
@@ -82,7 +217,34 @@ func (m *Module) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Icon
+	if all {
+		switch v := interface{}(m.GetIcon()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ModuleValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ModuleValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ModuleValidationError{
+				field:  "Icon",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(m.GetTags()) < 1 {
 		err := ModuleValidationError{
@@ -172,6 +334,8 @@ var _ interface {
 	ErrorName() string
 } = ModuleValidationError{}
 
+var _Module_Version_Pattern = regexp.MustCompile("v[0-9]+.[0-9]+.[0-9]+")
+
 // Validate checks the field values on Spark with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -223,7 +387,34 @@ func (m *Spark) validate(all bool) error {
 
 	// no validation rules for OutputSchema
 
-	// no validation rules for Icon
+	if all {
+		switch v := interface{}(m.GetIcon()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SparkValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SparkValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SparkValidationError{
+				field:  "Icon",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return SparkMultiError(errors)
@@ -352,7 +543,34 @@ func (m *Connector) validate(all bool) error {
 
 	// no validation rules for Schema
 
-	// no validation rules for Icon
+	if all {
+		switch v := interface{}(m.GetIcon()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ConnectorValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ConnectorValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ConnectorValidationError{
+				field:  "Icon",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return ConnectorMultiError(errors)
@@ -454,10 +672,6 @@ func (m *DetailEntity) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Id
-
-	// no validation rules for Repo
-
-	// no validation rules for Version
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
@@ -717,10 +931,6 @@ func (m *MasterEntity) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Repo
-
-	// no validation rules for Version
-
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
@@ -781,11 +991,44 @@ func (m *MasterEntity) validate(all bool) error {
 
 	// no validation rules for AggregateVersion
 
+	// no validation rules for Package
+
+	// no validation rules for Version
+
+	// no validation rules for Repo
+
 	// no validation rules for Label
 
 	// no validation rules for Description
 
-	// no validation rules for Icon
+	if all {
+		switch v := interface{}(m.GetIcon()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MasterEntityValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MasterEntityValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MasterEntityValidationError{
+				field:  "Icon",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	// no validation rules for Sparks
 
@@ -888,28 +1131,6 @@ func (m *Action) validate(all bool) error {
 	}
 
 	var errors []error
-
-	if utf8.RuneCountInString(m.GetRepo()) < 1 {
-		err := ActionValidationError{
-			field:  "Repo",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if !_Action_Version_Pattern.MatchString(m.GetVersion()) {
-		err := ActionValidationError{
-			field:  "Version",
-			reason: "value does not match regex pattern \"v[0-9]+.[0-9]+.[0-9]+\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
 
 	if m.GetModule() == nil {
 		err := ActionValidationError{
@@ -1095,5 +1316,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ActionValidationError{}
-
-var _Action_Version_Pattern = regexp.MustCompile("v[0-9]+.[0-9]+.[0-9]+")

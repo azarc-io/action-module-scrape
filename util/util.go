@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/azarc-io/action-module-scrape/temp/module_v1"
 	svg "github.com/h2non/go-is-svg"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
@@ -76,11 +77,11 @@ func LoadSchema(log Logger, file string) []byte {
 // IMAGE
 //********************************************************************************************
 
-func LoadImage(log Logger, file string, mustLoad bool) string {
+func LoadImage(log Logger, file string, mustLoad bool) *module_v1.Image {
 	fp, err := os.Open(file)
 	if err != nil {
 		if !mustLoad && errors.Is(err, syscall.ENOENT) {
-			return ""
+			return &module_v1.Image{}
 		}
 		log.Fatalf("opening file: %s", err)
 	}
@@ -100,10 +101,19 @@ func LoadImage(log Logger, file string, mustLoad bool) string {
 		if !svg.IsSVG(buf) {
 			log.Fatalf("%s uses an unsupported image format", file)
 		}
-		return fmt.Sprintf("data:image/svg+xml;base64, %s", base64.StdEncoding.EncodeToString(buf))
+		return &module_v1.Image{Encoding: module_v1.ImageEncoding_B64SVG, Data: base64.StdEncoding.EncodeToString(buf)}
 	}
 	if cfg.Width*cfg.Height > maxImageSize {
 		log.Fatalf("error loading %s's HxW cannot exceed %d", file, maxImageSize)
 	}
-	return fmt.Sprintf("data:image/%s;base64, %s", tp, base64.StdEncoding.EncodeToString(LoadFile(log, file, true)))
+	img := &module_v1.Image{Data: base64.StdEncoding.EncodeToString(LoadFile(log, file, true))}
+	switch tp {
+	case "png":
+		img.Encoding = module_v1.ImageEncoding_B64PNG
+	case "jpeg":
+		img.Encoding = module_v1.ImageEncoding_B64JPG
+	default:
+		log.Fatalf("unknown image encoding %s for %s", tp, file)
+	}
+	return img
 }

@@ -36,6 +36,7 @@ The module config stored in __module.yaml__ contains the properties indicated be
 ```
 | Property      | Type      | Required  |
 -------------------------------------------
+| package       | string    | True      |
 | label         | string    | True      |
 | description   | string    | True      |
 | tags          | []string  | True      |

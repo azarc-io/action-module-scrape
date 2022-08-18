@@ -1,5 +1,9 @@
 name: 'VTH module scraper'
 description: 'Upsert a vth module from scraped info'
+inputs:
+  version:
+    required: false
+    description: 'The version number to set in the helm values'
 runs:
   using: composite
   steps:
@@ -7,3 +11,5 @@ runs:
       shell: bash
       working-directory: ${{ github.action_path }}
       run: ./dist/$(echo "${{runner.os}}" | tr "[:upper:]" "[:lower:]")
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
