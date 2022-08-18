@@ -29,7 +29,7 @@ func main() {
 func loadAction() (*githubactions.Action, *module_v1.Action, string) {
 	gitAction := githubactions.New()
 	if gitAction.Getenv("GITHUB_REF_TYPE") != "tag" {
-		gitAction.Fatalf("module scrape can only be used on push tag")
+		gitAction.Fatalf("action can only be used on push tag")
 	}
 
 	action := &module_v1.Action{Repo: gitAction.Getenv("GITHUB_REPOSITORY")}

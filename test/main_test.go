@@ -26,17 +26,21 @@ func (s *shouldFail) Fatalf(msg string, args ...any) {
 }
 
 func TestLoadSmallPNG(t *testing.T) {
-	util.LoadImage(t, "image/small.png")
+	util.LoadImage(t, "image/small_png")
 }
 
 func TestLoadLargePNG(t *testing.T) {
-	util.LoadImage(newShouldFail(t), "image/large.png")
+	util.LoadImage(newShouldFail(t), "image/large_png")
 }
 
 func TestLoadSmallJPG(t *testing.T) {
-	util.LoadImage(t, "image/small.jpg")
+	util.LoadImage(t, "image/jpg")
+}
+
+func TestLoadSVG(t *testing.T) {
+	util.LoadImage(t, "image/svg")
 }
 
 func TestLoadUnknown(t *testing.T) {
-	util.LoadImage(newShouldFail(t), "image/small.webp")
+	util.LoadImage(newShouldFail(t), "image/webp")
 }

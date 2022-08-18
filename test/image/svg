@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="138.57764mm"
+   height="138.57767mm"
+   viewBox="0 0 138.57763 138.57766"
+   version="1.1"
+   id="banghead"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="banghead.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title1">Bang head</title>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     objecttolerance="1"
+     gridtolerance="10"
+     guidetolerance="1"
+     inkscape:zoom="2.603541"
+     inkscape:cx="280.19532"
+     inkscape:cy="284.80443"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="1912"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     viewbox-x="0"
+     showguides="false" />
+  <defs
+     id="defs836" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer (static)"
+     style="display:inline"
+     transform="translate(-14.430665,-15.650168)">
+    <rect
+       style="fill:#ffea00;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:6.2749;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="yellow"
+       width="96.860893"
+       height="96.860893"
+       x="70.829102"
+       y="-47.568119"
+       transform="rotate(45)" />
+    <path
+       id="stationairy"
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 143.2715,100.1888 -1.07116,-0.0359 v -8.573735 h -1.83566 l -0.61189,-1.045211 h -2.85548 v -4.507758 l 5.30301,-0.586748 c 1.00371,1.342111 1.54028,2.959914 1.76193,4.325262 0.94399,4.075019 0.50992,6.238115 0.77259,10.2804 0.26266,4.04229 0.52971,25.69686 -0.24743,35.50467 l 0.84859,-2.76459 c 0.35717,-13.39688 -0.0297,-29.5484 -0.0904,-33.047586 -0.0607,-3.499183 0.0471,-6.476571 -0.69691,-10.118629 -0.38516,-1.818832 -1.12796,-4.093657 -2.34835,-5.218585 V 74.511253 L 127.719,72.610597 v -1.306493 h -6.73077 v 16.807639 h 6.73077 v -1.084805 l 1.72284,-0.160675 v 3.667681 h -3.23325 l -0.93709,1.045211 h -4.28322 v 8.573735 h -1.63169 l -0.204,-5.829199 -17.13284,1.223775 -2.205133,-2.189889 -0.954234,-8.444745 -5.493796,3.468412 -13.387137,-0.338975 c -1.809508,3.082615 -3.50482,7.983059 -4.107575,11.065674 h -0.657534 c 0,0 -0.12147,-7.884684 10e-7,-11.686539 0.02679,-0.83856 -1.317627,-1.214864 -2.151657,-1.305945 -1.236667,-0.13505 -3.439641,-0.03834 -3.533137,1.20216 -0.224608,2.980055 -0.590225,9.972495 -0.590225,9.972495 h -0.811359 v 15.705106 c 0,0.84096 0.0074,1.85833 0.607386,2.44755 0.647196,0.63554 1.750642,0.50605 2.651512,0.61189 4.2412,0.49831 12.810794,0 12.810794,0 v 1.31487 c 0,0 -5.418546,0.55617 -8.731544,0.73313 -1.168037,0.0624 -2.758999,0.87391 -2.855476,2.03963 -0.06344,0.76657 1.274038,-0.11306 1.987386,-0.40079 0.541153,-0.52589 1.07241,-0.84629 2.914849,-0.91128 l 6.580489,-0.68728 0.0352,0.66623 h -0.65781 v 9.43898 h -8.087012 c -1.557577,-0.0752 -2.161208,-0.11827 -2.161208,1.75573 h 1.016244 c -1.639357,1.61117 -0.532911,3.69069 0.917645,3.5922 1.450556,-0.0985 2.50396,-2.15383 0.917645,-3.5922 h 8.099334 c -1.327658,1.65596 -0.70556,3.55408 1.029859,3.5922 1.735418,0.0381 2.800491,-2.10572 1.029858,-3.5922 h 8.300993 c -1.572888,1.11149 -0.962358,3.60677 0.882236,3.5922 1.844594,-0.0146 2.392607,-2.28248 0.882237,-3.5922 h 0.609746 c 0.0023,-1.78372 -0.978565,-1.74561 -1.967721,-1.75573 h -8.279949 v -9.43898 H 85.86818 v -2.75451 h 10.402086 l 0.815848,-3.87535 4.079246,-0.40792 v 22.84379 h 6.93473 v -2.81696 l 2.06128,-0.13447 -0.0217,-29.4786 h 28.66997 v 37.90417 l 3.35213,-4.48717 v -33.417 h 1.10973 z m -49.040853,-3.10268 0.407924,4.8951 h 5.710949 l -0.20396,-2.651513 c 0,0 -2.239334,-0.01666 -3.263402,-0.407924 -1.00418,-0.383662 -2.651511,-1.835663 -2.651511,-1.835663 z m -23.698163,7.95454 -2e-6,7.75057 4.11777,0.20396 -0.611886,-7.54661 z"
+       sodipodi:nodetypes="ccccccccczcczccccccccccccccccccccccccsssccsssccssccccccccczcczcczcccccccccccccccccccccccccscccccc"
+       transform="translate(-24.475004,-17.048312)" />
+    <path
+       style="color:#000000;fill:#000000;fill-opacity:1;stroke-width:0.848223;stroke-linecap:round;stroke-linejoin:round;-inkscape-stroke:none"
+       d="m 89.83155,18.160239 c -3.345993,-3.345992 -8.878132,-3.347164 -12.224125,-0.0011 L 16.940157,78.826333 c -3.34599,3.345993 -3.34599,8.879306 0,12.225297 l 60.667266,60.66726 c 3.345995,3.34599 8.878135,3.34483 12.224127,-8.5e-4 l 60.66727,-60.667582 c 3.34598,-3.345992 3.34598,-8.876962 -1e-5,-12.222956 z m -4.109792,1.563203 63.213852,63.213852 c 0.85591,0.855916 0.85591,3.147454 1e-5,4.003371 L 85.721757,150.15452 c -0.855918,0.8559 -3.147455,0.8559 -4.003371,0 L 18.504534,86.940666 c -0.855917,-0.855916 -0.855917,-3.147454 0,-4.003369 L 81.718389,19.723442 c 0.855916,-0.855916 3.147453,-0.855916 4.003369,0 z"
+       id="outline"
+       sodipodi:nodetypes="cccssccscscccccccs" />
+    <path
+       style="fill:#000000;stroke:none;stroke-width:0.340436px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 63.273365,52.515921 4.659535,0.0162 1.736093,-4.827994 1.663726,4.767583 4.841131,0.02626 -3.787665,2.847235 1.796098,4.104148 -4.523385,-2.40139 -4.597172,2.501078 1.791454,-4.215838 z"
+       id="star1"
+       sodipodi:nodetypes="ccccccccccc" />
+    <path
+       style="fill:#000000;stroke:none;stroke-width:0.218179px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 85.11497,51.538817 2.986224,-0.01033 1.112636,3.094187 1.066257,-3.05547 3.102605,-0.01682 -2.427456,-1.824748 1.151092,-2.630285 -2.898968,1.539014 -2.946256,-1.602903 1.148115,2.701866 z"
+       id="star2"
+       sodipodi:nodetypes="ccccccccccc" />
+  </g>
+  <g
+     inkscape:label="Layer 1 (300)"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-38.905671,-32.69848)"
+     style="display:inline">
+    <g
+       id="moving">
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 79.893642,87.954501 c 0,0 2.218207,-5.91668 4.755325,-9.077487 1.782365,-2.220512 3.962778,-4.262765 6.69189,-5.074834 1.825749,-0.54327 4.25904,-1.119614 5.713522,0.110424 1.843452,1.558978 1.677032,4.621261 1.681683,7.121052 0.777095,5.240414 0.148411,4.944175 0.148411,4.944175 l -5.341947,3.323159 z"
+         id="upperbody"
+         sodipodi:nodetypes="cssscccc"
+         inkscape:transform-center-x="-9.8715939"
+         inkscape:transform-center-y="-6.2502024" />
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 95.735297,68.80876 c -0.06782,4.462472 4.193651,9.135765 8.641913,9.197813 4.44827,0.06204 8.95839,-4.371637 9.07336,-8.697203 0.11495,-4.325565 -3.70743,-8.957897 -8.83048,-9.012307 -5.123054,-0.05441 -8.816968,4.049225 -8.884793,8.511697 z"
+         id="head"
+         sodipodi:nodetypes="zzzzz" />
+    </g>
+  </g>
+  <animateTransform
+     xlink:href="#moving"
+     attributeName="transform"
+     attributeType="XML"
+     type="rotate"
+     begin="0s;rotfullup.end"
+     dur="0.1s"
+     from="0 80 88"
+     to="40 80 88"
+     id="rotdown" />
+  <animateTransform
+     xlink:href="#moving"
+     attributeName="transform"
+     attributeType="XML"
+     type="rotate"
+     begin="rotdown.end"
+     dur="0.2s"
+     from="40 80 88"
+     to="20 80 88"
+     id="rothalfup" />
+  <animateTransform
+     xlink:href="#moving"
+     attributeName="transform"
+     attributeType="XML"
+     type="rotate"
+     begin="rothalfup.end"
+     dur="0.2s"
+     from="20 80 88"
+     to="0 80 88"
+     id="rotfullup" />
+  <animateTransform
+     xlink:href="#star1"
+     attributeName="transform"
+     attributeType="XML"
+     type="translate"
+     from="0 0"
+     to="62 46"
+     begin="rotdown.end"
+     dur="0.3s"
+     id="star1pos" />
+  <animateTransform
+     xlink:href="#star1"
+     attributeName="transform"
+     attributeType="XML"
+     additive="sum"
+     type="scale"
+     from="1"
+     to="0"
+     begin="rotdown.end"
+     dur="0.3s"
+     fill="freeze"
+     id="star1size" />
+  <animateTransform
+     xlink:href="#star2"
+     attributeName="transform"
+     attributeType="XML"
+     type="translate"
+     from="0 0"
+     to="99 43"
+     begin="rotdown.end"
+     dur="0.3s"
+     id="star2pos" />
+  <animateTransform
+     xlink:href="#star2"
+     attributeName="transform"
+     attributeType="XML"
+     additive="sum"
+     type="scale"
+     from="1"
+     to="0"
+     begin="rotdown.end"
+     dur="0.3s"
+     fill="freeze"
+     id="star2size" />
+  <metadata
+     id="metadata929">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Thom Vis</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Free to use</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:title>Bang head</dc:title>
+        <dc:date>17-08-2022</dc:date>
+        <dc:description>Stress, banging head at keyboard. Animated gif of this is old, but needed an animated SVG.</dc:description>
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

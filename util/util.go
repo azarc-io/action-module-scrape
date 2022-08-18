@@ -2,13 +2,14 @@ package util
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
+	svg "github.com/h2non/go-is-svg"
 	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
-
 	"io/ioutil"
 	"os"
 )
@@ -24,19 +25,27 @@ func LoadImage(log Logger, file string) string {
 	if err != nil {
 		log.Fatalf("opening file: %s", err)
 	}
+	defer func() {
+		if err = fp.Close(); err != nil {
+			log.Fatalf("could not close %s: %s", file, err.Error())
+		}
+	}()
 
 	cfg, tp, err := image.DecodeConfig(fp)
 	if err != nil {
-		//if errors.Is(err, image.ErrFormat) {
-		// TODO add vector support
-		//}
-		log.Fatalf("error loading %s: %s", file, err)
-	}
+		if !errors.Is(err, image.ErrFormat) {
+			log.Fatalf("error loading %s: %s", file, err)
+		}
 
+		buf := ReadFile(log, file)
+		if !svg.IsSVG(buf) {
+			log.Fatalf("%s uses an unsupported image format", file)
+		}
+		return fmt.Sprintf("data:image/svg+xml;base64, %s", base64.StdEncoding.EncodeToString(buf))
+	}
 	if cfg.Width*cfg.Height > maxImageSize {
 		log.Fatalf("error loading %s's HxW cannot exceed %d", file, maxImageSize)
 	}
-
 	return fmt.Sprintf("data:image/%s;base64, %s", tp, base64.StdEncoding.EncodeToString(ReadFile(log, file)))
 }
 
