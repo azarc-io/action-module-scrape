@@ -1,10 +1,45 @@
 package test_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"github.com/azarc-io/action-module-scrape/temp/module_v1"
 	"github.com/azarc-io/action-module-scrape/util"
+	"net/http"
 	"testing"
 )
+
+func TestSubmit(t *testing.T) {
+	action := &module_v1.Action{
+		Module: &module_v1.Module{
+			Package:     "test",
+			Version:     "v0.0.0",
+			Repo:        "0",
+			Label:       "0",
+			Description: "0",
+			Tags:        []string{"0"},
+		},
+	}
+
+	buf := &bytes.Buffer{}
+	if err := json.NewEncoder(buf).Encode(action); err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	req, err := http.NewRequest(
+		http.MethodPost,
+		"https://auth-events.cloud.azarc.dev/api/v1/module",
+		buf,
+	)
+	req.Header.Set("Authorization", "ifjdjf-fdkjfdk-")
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	t.Logf(resp.Status)
+}
 
 //********************************************************************************************
 // FILE
