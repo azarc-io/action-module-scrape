@@ -119,7 +119,7 @@ func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
 		gitAction.Fatalf("could not add module: %s", err.Error())
 	}
 	if resp.StatusCode != http.StatusOK {
-		gitAction.Fatalf("received %d from add module request", resp.StatusCode)
+		gitAction.Fatalf("add module response [code]: %d, [status]: '%s'", resp.StatusCode, resp.Status)
 	}
 
 	gitAction.Infof("scraped and submitted for module [package]: %s, [version]: %s, [sparks]: %d",
