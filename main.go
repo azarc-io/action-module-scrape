@@ -106,13 +106,22 @@ func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
 	if err := json.NewEncoder(buf).Encode(action); err != nil {
 		gitAction.Fatalf("could not encode module: %s", err.Error())
 	}
-	resp, err := http.Post("https://auth-events.cloud.azarc.dev/api/v1/module", "application/json", buf)
+
+	req, err := http.NewRequest(
+		http.MethodPost,
+		fmt.Sprintf("%s/api/v1/module", gitAction.Getenv("INPUT_SUBMISSION_HOST")),
+		buf,
+	)
+	req.Header.Set("Authorization", gitAction.Getenv("INPUT_TOKEN"))
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		gitAction.Fatalf("could not add module: %s", err.Error())
 	}
 	if resp.StatusCode != http.StatusOK {
 		gitAction.Fatalf("received %d from add module request", resp.StatusCode)
 	}
+
 	gitAction.Infof("scraped and submitted for module [package]: %s, [version]: %s, [sparks]: %d",
 		action.Module.Package, action.Module.Version, len(action.Sparks))
 }

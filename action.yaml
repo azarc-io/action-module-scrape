@@ -3,10 +3,14 @@ description: 'Upsert a vth module from scraped info'
 inputs:
   version:
     required: false
-    description: 'Version number of the module'
+    description: 'The package version, will be extracted from tag if it is not provided'
   token:
-    required: false
+    required: true
     description: 'Vth token linked with module package'
+  submission_url:
+    required: true
+    description: 'The url the module submission'
+
 runs:
   using: composite
   steps:
@@ -17,3 +21,4 @@ runs:
       env:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_HOST: ${{ inputs.host }}
