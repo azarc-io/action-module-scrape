@@ -112,7 +112,6 @@ func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
 		fmt.Sprintf("%s/api/v1/module", gitAction.Getenv("INPUT_SUBMISSION_HOST")),
 		buf,
 	)
-	gitAction.Infof("token %s", gitAction.Getenv("INPUT_TOKEN"))
 	req.Header.Set("Authorization", gitAction.Getenv("INPUT_TOKEN"))
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
