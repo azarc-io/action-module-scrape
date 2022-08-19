@@ -22,12 +22,6 @@ jobs:
       - name: "Git Config"
         shell: bash
         run: git config --global url.https://${{ secrets.PAT_TOKEN }}@github.com/.insteadOf https://github.com/
-      - name: "Go Mod"
-        shell: bash
-        if: env.DRY_RUN == 'false'
-        run: go mod download
-        env:
-          GOPRIVATE: "github.com/azarc-io"
       - uses: actions/cache@v3
         with:
           path: |
@@ -62,21 +56,3 @@ jobs:
           git commit -m 'release: ${{ steps.versioning.outputs.version }}'
           git tag v${{ steps.versioning.outputs.version }}
           git push origin --tags
-
-      - name: "Build Changelog"
-        id: build_changelog
-        uses: mikepenz/release-changelog-builder-action@v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.versioning.outputs.version }}
-          release_name: v${{ steps.versioning.outputs.version }}
-          body: ${{ steps.build_changelog.outputs.changelog }}
-          draft: false
-          prerelease: false
