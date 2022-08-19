@@ -3,7 +3,10 @@ description: 'Upsert a vth module from scraped info'
 inputs:
   version:
     required: false
-    description: 'The version number to set in the helm values'
+    description: 'Version number of the module'
+  token:
+    required: false
+    description: 'Vth token linked with module package'
 runs:
   using: composite
   steps:
@@ -13,3 +16,4 @@ runs:
       run: ./dist/$(echo "${{runner.os}}" | tr "[:upper:]" "[:lower:]")
       env:
         INPUT_VERSION: ${{ inputs.version }}
+        INPUT_TOKEN: ${{ inputs.token }}
