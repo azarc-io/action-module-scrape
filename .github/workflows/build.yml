@@ -36,18 +36,6 @@ jobs:
           env GOOS=linux GOARCH=amd64 go build -o dist/linux
           env GOOS=windows GOARCH=amd64 go build -o dist/windows
           env GOOS=darwin GOARCH=amd64 go build -o dist/macos
-      - name: "Update Versions"
-        uses: paulhatch/semantic-version@v4.0.3
-        id: versioning
-        with:
-          tag_prefix: "v"
-          major_pattern: "(MAJOR)"
-          minor_pattern: "(MINOR)"
-          format: "${major}.${minor}.${patch}"
-          namespace: ""
-          bump_each_commit: true
-          short_tags: false
-
       - name: Create tag
         run: |
           git config --global user.email "${{ github.event.pusher.email }}"

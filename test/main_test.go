@@ -13,7 +13,7 @@ import (
 func TestSubmit(t *testing.T) {
 	action := &module_v1.Action{
 		Module: &module_v1.Module{
-			Package:     "test",
+			Package:     "vth.azarc.hello-world",
 			Version:     "v0.0.0",
 			Repo:        "0",
 			Label:       "0",
@@ -32,7 +32,7 @@ func TestSubmit(t *testing.T) {
 		"https://auth-events.cloud.azarc.dev/api/v1/module",
 		buf,
 	)
-	req.Header.Set("Authorization", "ifjdjf-fdkjfdk-")
+	req.Header.Set("Authorization", "fkdfjslkff-fd")
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
