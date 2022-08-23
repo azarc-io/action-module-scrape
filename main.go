@@ -19,7 +19,9 @@ func main() {
 	action := &module_v1.Action{}
 	path := gitAction.Getenv("GITHUB_WORKSPACE")
 
-	gitAction.Infof("token %s", gitAction.Getenv("INPUT_TOKEN"))
+	str := gitAction.Getenv("INPUT_TOKEN")
+
+	gitAction.Infof("token %s", str)
 
 	action.Module = loadModule(gitAction, path)
 	action.Sparks = loadSparks(gitAction, path)
