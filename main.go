@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/azarc-io/action-module-scrape/temp/module_v1"
 	"github.com/azarc-io/action-module-scrape/util"
+	"github.com/google/uuid"
 	"github.com/sethvargo/go-githubactions"
 	"net/http"
 )
@@ -18,12 +19,16 @@ func main() {
 	gitAction := githubactions.New()
 	action := &module_v1.Action{}
 	path := gitAction.Getenv("GITHUB_WORKSPACE")
+	token := gitAction.Getenv("INPUT_TOKEN")
+	if _, err := uuid.Parse(token); err != nil {
+		gitAction.Fatalf("token is not valid")
+	}
 
 	action.Module = loadModule(gitAction, path)
 	action.Sparks = loadSparks(gitAction, path)
 	action.Connectors = loadConnectors(gitAction, path)
 
-	submitAction(gitAction, action)
+	submitAction(gitAction, action, token)
 }
 
 //********************************************************************************************
@@ -97,7 +102,7 @@ func loadConnectors(gitAction *githubactions.Action, path string) []*module_v1.C
 // SUBMISSION
 //********************************************************************************************
 
-func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
+func submitAction(gitAction *githubactions.Action, action *module_v1.Action, token string) {
 	if err := action.Validate(); err != nil {
 		gitAction.Fatalf("action validation failed: %s", err.Error())
 	}
@@ -112,7 +117,7 @@ func submitAction(gitAction *githubactions.Action, action *module_v1.Action) {
 		fmt.Sprintf("%s/api/v1/module", gitAction.Getenv("INPUT_SUBMISSION_HOST")),
 		buf,
 	)
-	req.Header.Set("Authorization", gitAction.Getenv("INPUT_TOKEN"))
+	req.Header.Set("Authorization", token)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

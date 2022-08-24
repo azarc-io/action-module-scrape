@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/amsokol/protoc-gen-gotag v0.2.1
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
+	github.com/google/uuid v1.3.0
 	github.com/h2non/go-is-svg v0.0.0-20160927212452-35e8c4b0612c
 	github.com/sethvargo/go-githubactions v1.0.0
 	github.com/xeipuuv/gojsonschema v1.2.0
