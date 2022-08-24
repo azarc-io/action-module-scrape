@@ -20,6 +20,9 @@ func main() {
 	action := &module_v1.Action{}
 	path := gitAction.Getenv("GITHUB_WORKSPACE")
 	token := gitAction.Getenv("INPUT_TOKEN")
+	if token == "" {
+		gitAction.Fatalf("token is not set")
+	}
 	if _, err := uuid.Parse(token); err != nil {
 		gitAction.Fatalf("token is not valid")
 	}
