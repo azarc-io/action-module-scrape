@@ -20,7 +20,7 @@ type (
 	}
 )
 
-func LoadConfig(l ConfigLoader) *Config {
+func LoadConfig(log Logger, l ConfigLoader) *Config {
 	config := &Config{}
 	t := reflect.TypeOf(config).Elem()
 	v := reflect.ValueOf(config).Elem()
@@ -28,10 +28,7 @@ func LoadConfig(l ConfigLoader) *Config {
 	for i := 0; i < v.NumField(); i++ {
 		v.Field(i).SetString(l.Getenv(t.Field(i).Tag.Get("env")))
 	}
-	return config
-}
 
-func (config *Config) Validate(log Logger) {
 	if config.Token == "" {
 		log.Fatalf("token is not set")
 	}
@@ -42,5 +39,8 @@ func (config *Config) Validate(log Logger) {
 		if _, err := fmt.Sscanf(config.Ref, "refs/tags/%s", &config.Version); err != nil {
 			log.Fatalf("getting tag push version: %s", err.Error())
 		}
+		log.Infof("module version loaded from tag")
 	}
+	log.Infof("config version: %s", config.Version)
+	return config
 }
