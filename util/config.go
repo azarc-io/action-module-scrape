@@ -39,8 +39,6 @@ func LoadConfig(log Logger, l ConfigLoader) *Config {
 		if _, err := fmt.Sscanf(config.Ref, "refs/tags/%s", &config.Version); err != nil {
 			log.Fatalf("getting tag push version: %s", err.Error())
 		}
-		log.Infof("module version loaded from tag")
 	}
-	log.Infof("config version: %s", config.Version)
 	return config
 }
