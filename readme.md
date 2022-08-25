@@ -20,8 +20,6 @@ All the files and folders need to be named exactly as indicated below.
 |           │   readme.md           (optional)
 |           |   icon                (optional)
 |           │   spark.yaml          (required)
-|           │   input_schema.json   (required)
-|           │   output_schema.json  (required)
 └───connectors (optional)
         └───[name] (optional)
             │   readme.md           (optional)
@@ -34,30 +32,54 @@ All the files and folders need to be named exactly as indicated below.
 ### Module YAML
 The module config stored in __module.yaml__ contains the properties indicated below.
 ```
-| Property      | Type      | Required  |
--------------------------------------------
-| package       | string    | True      |
-| label         | string    | True      |
-| description   | string    | True      |
-| tags          | []string  | True      |
+| Property          | Type      | Required  | Description
+--------------------------------------------------------------------------------------
+| package           | string    | True      | cononical package name give by azarc
+| label             | string    | True      | display label
+| description       | string    | True      | display description
+| tags              | []string  | False     | search tags used in verathread
 ```
 
 ### Spark YAML
 The spark config stored in __spark.yaml__ contains the properties indicated below.
 ```
-| Property      | Type      | Required  |
--------------------------------------------
-| label         | string    | True      |
-| description   | string    | True      |
+| Property          | Type      | Required  | Description
+--------------------------------------------------------------------------------------
+| label             | string    | True      | display name
+| description       | string    | True      | display description
+| config            | object    | False     | unique config
+| extensible_inputs | bool      | False     | ability to add inputs that are not specified 
+| inputs            | object    | False     | see Spark Input
+| outputs           | object    | False     | see Spark Output
+```
+
+#### Spark Input
+The keys of inputs are the names. The value contains the remaining properties indicated below.
+```
+| Property          | Type      | Required  | Description
+--------------------------------------------------------------------------------------
+| mime_types        | []string  | True      | possible mime types
+| schema            | string    | True      | relative path to the schema
+| required          | bool      | False     | set if the input is required  
+```
+
+#### Spark Output
+The keys of inputs are the names. The value contains the remaining properties indicated below.
+```
+| Property          | Type      | Required  | Description
+--------------------------------------------------------------------------------------
+| mime_type         | string    | True      | mime types
+| schema            | string    | True      | relative path to the schema
 ```
 
 ### Connector YAML
 The spark config stored in __connector.yaml__ contains the properties indicated below.
 ```
-| Property      | Type      | Required  |
--------------------------------------------
-| label         | string    | True      |
-| description   | string    | True      |
+| Property          | Type      | Required  | Description
+--------------------------------------------------------------------------------------
+| label             | string    | True      | display name
+| description       | string    | True      | display description
+| config            | object    | False     | unique config
 ```
 
 ### Icons
