@@ -1,4 +1,4 @@
-# VTH Module Scraper
+# VTH Module Submission
 
 The VTH module scraper is a GitHub action that should be used on tag push.<br>
 The action will scrape all the information of the repo and submit on success to veratherad.<br>
@@ -61,6 +61,7 @@ The spark config stored in __connector.yaml__ contains the properties indicated 
 ```
 
 ### Icons
+An icon's HxW cannot be larger than 500 000 pixels.</br> 
 The supported image types are.
  - PNG
  - JPG
