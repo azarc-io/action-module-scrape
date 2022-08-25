@@ -22,8 +22,8 @@ func LoadModule(log Logger, config *Config) *module_v1.Module {
 	module.Version = config.Version
 	module.Repo = config.Repo
 	module.Icon = LoadImage(log, fmt.Sprintf("%s/icon", config.Path), false)
-	module.Readme = LoadFile(log, readme, false)
-	module.Licence = LoadFile(log, fmt.Sprintf("%s/licence.txt", config.Path), false)
+	module.Readme = LoadFileString(log, readme, false)
+	module.Licence = LoadFileString(log, fmt.Sprintf("%s/licence.txt", config.Path), false)
 	return module
 }
 
@@ -36,7 +36,7 @@ func loadSpark(log Logger, sparks []*module_v1.Spark) func(string, string) {
 		spark := module_v1.Spark{}
 		ParseYaml(log, fmt.Sprintf("%s/%s", path, "spark.yaml"), &spark)
 		spark.Name = sparkName
-		spark.Readme = LoadFile(log, fmt.Sprintf("%s/%s", path, readme), false)
+		spark.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
 		spark.Icon = LoadImage(log, fmt.Sprintf("%s/icon", path), false)
 		for _, input := range spark.Inputs {
 			input.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, string(input.Schema)))
@@ -68,7 +68,7 @@ func loadConnector(log Logger, connectors []*module_v1.Connector) func(string, s
 		connector := module_v1.Connector{}
 		ParseYaml(log, fmt.Sprintf("%s/%s", path, "connector.yaml"), &connector)
 		connector.Name = name
-		connector.Readme = LoadFile(log, fmt.Sprintf("%s/%s", path, readme), false)
+		connector.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
 		connector.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, "schema.json"))
 		connector.Icon = LoadImage(log, fmt.Sprintf("%s/icon", path), false)
 		connectors = append(connectors, &connector)

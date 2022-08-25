@@ -16,7 +16,10 @@ import (
 	"syscall"
 )
 
-const maxImageSize = 500000
+const (
+	maxImageSize = 500000
+	schema       = "schema"
+)
 
 //********************************************************************************************
 // FILE
@@ -46,6 +49,10 @@ func LoadFile(log Logger, file string, mustLoad bool) []byte {
 	return data
 }
 
+func LoadFileString(log Logger, file string, mustLoad bool) string {
+	return string(LoadFile(log, file, mustLoad))
+}
+
 //********************************************************************************************
 // YAML
 //********************************************************************************************
@@ -61,12 +68,12 @@ func ParseYaml(log Logger, file string, v interface{}) {
 // SCHEMA
 //********************************************************************************************
 
-func LoadSchema(log Logger, file string) []byte {
+func LoadSchema(log Logger, file string) string {
 	v := LoadFile(log, file, true)
 	if _, err := gojsonschema.NewSchema(gojsonschema.NewBytesLoader(v)); err != nil {
 		log.Fatalf("loading schema: %s", err.Error())
 	}
-	return v
+	return string(v)
 }
 
 //********************************************************************************************
