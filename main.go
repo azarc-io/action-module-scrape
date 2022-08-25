@@ -8,9 +8,11 @@ import (
 
 func main() {
 	gitAction := githubactions.New()
-	config := util.LoadConfig(gitAction)
-	action := &module_v1.Action{}
 
+	config := util.LoadConfig(gitAction)
+	config.Validate(gitAction)
+
+	action := &module_v1.Action{}
 	action.Module = util.LoadModule(gitAction, config)
 	action.Sparks = util.LoadSparks(gitAction, config)
 	action.Connectors = util.LoadConnectors(gitAction, config)
