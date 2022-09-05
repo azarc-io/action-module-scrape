@@ -16,6 +16,6 @@ func (l *loader) Getenv(k string) string {
 
 func TestConfigLoad(t *testing.T) {
 	const v = "blap"
-	config := util.LoadConfig(&loader{m: map[string]string{"GITHUB_WORKSPACE": v}})
-	assert.Equal(t, config.Path, v)
+	config := util.LoadConfig(&testWrap{t: t}, &loader{m: map[string]string{"INPUT_TOKEN": v, "INPUT_VERSION": v}})
+	assert.Equal(t, config.Version, v)
 }

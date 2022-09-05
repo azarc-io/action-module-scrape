@@ -22,7 +22,7 @@ func LoadModule(log Logger, config *Config) *module_v1.Module {
 	module.Version = config.Version
 	module.Repo = config.Repo
 	module.Icon = LoadImage(log, fmt.Sprintf("%s/icon", config.Path), false)
-	module.Readme = LoadFileString(log, readme, false)
+	module.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", config.Path, readme), false)
 	module.Licence = LoadFileString(log, fmt.Sprintf("%s/licence.txt", config.Path), false)
 	return module
 }
