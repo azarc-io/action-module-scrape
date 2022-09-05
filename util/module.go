@@ -31,11 +31,11 @@ func LoadModule(log Logger, config *Config) *module_v1.Module {
 // SPARK
 //********************************************************************************************
 
-func loadSpark(log Logger, sparks []*module_v1.Spark) func(string, string) {
-	return func(path, sparkName string) {
+func loadSpark(log Logger, sparks *[]*module_v1.Spark) func(string, string) {
+	return func(path, name string) {
 		spark := module_v1.Spark{}
 		ParseYaml(log, fmt.Sprintf("%s/%s", path, "spark.yaml"), &spark)
-		spark.Name = sparkName
+		spark.Name = name
 		spark.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
 		spark.Icon = LoadImage(log, fmt.Sprintf("%s/icon", path), false)
 		for _, input := range spark.Inputs {
@@ -49,13 +49,13 @@ func loadSpark(log Logger, sparks []*module_v1.Spark) func(string, string) {
 				LoadSchema(log, fmt.Sprintf("%s/%s", path, output.Schema))
 			}
 		}
-		sparks = append(sparks, &spark)
+		*sparks = append(*sparks, &spark)
 	}
 }
 
 func LoadSparks(log Logger, config *Config) []*module_v1.Spark {
 	var sparks []*module_v1.Spark
-	LoadDirs(log, fmt.Sprintf("%s/sparks", config.Path), loadSpark(log, sparks))
+	LoadDirs(log, fmt.Sprintf("%s/sparks", config.Path), loadSpark(log, &sparks))
 	return sparks
 }
 
@@ -63,7 +63,7 @@ func LoadSparks(log Logger, config *Config) []*module_v1.Spark {
 // CONNECTOR
 //********************************************************************************************
 
-func loadConnector(log Logger, connectors []*module_v1.Connector) func(string, string) {
+func loadConnector(log Logger, connectors *[]*module_v1.Connector) func(string, string) {
 	return func(path, name string) {
 		connector := module_v1.Connector{}
 		ParseYaml(log, fmt.Sprintf("%s/%s", path, "connector.yaml"), &connector)
@@ -71,13 +71,13 @@ func loadConnector(log Logger, connectors []*module_v1.Connector) func(string, s
 		connector.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
 		connector.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, "schema.json"))
 		connector.Icon = LoadImage(log, fmt.Sprintf("%s/icon", path), false)
-		connectors = append(connectors, &connector)
+		*connectors = append(*connectors, &connector)
 	}
 }
 
 func LoadConnectors(log Logger, config *Config) []*module_v1.Connector {
 	var connectors []*module_v1.Connector
-	LoadDirs(log, fmt.Sprintf("%s/connectors", config.Path), loadConnector(log, connectors))
+	LoadDirs(log, fmt.Sprintf("%s/connectors", config.Path), loadConnector(log, &connectors))
 	return connectors
 }
 
@@ -110,6 +110,6 @@ func SubmitAction(log Logger, config *Config, action *module_v1.Action) {
 		log.Fatalf("add module response [code]: %d, [status]: '%s'", resp.StatusCode, resp.Status)
 	}
 
-	log.Infof("scraped and submitted for module [package]: %s, [version]: %s, [sparks]: %d",
-		action.Module.Package, action.Module.Version, len(action.Sparks))
+	log.Infof("scraped and submitted for module [package]: %s, [version]: %s, [sparks]: %d, connectors: %d",
+		action.Module.Package, action.Module.Version, len(action.Sparks), len(action.Connectors))
 }
