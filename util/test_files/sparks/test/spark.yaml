@@ -1,0 +1,13 @@
+label: Hello World
+description: Standard hello world
+inputs:
+  test:
+    mime_types: ["application/json"]
+    schema: "test-schema.json"
+    required: true
+outputs:
+  test:
+    mime_type: "application/json"
+    schema: "test-schema.json"
+config:
+  foo: bar

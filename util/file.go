@@ -57,10 +57,12 @@ func LoadFileString(log Logger, file string, mustLoad bool) string {
 // YAML
 //********************************************************************************************
 
-func ParseYaml(log Logger, file string, v interface{}) {
+func ParseYaml(log Logger, file string, vs ...interface{}) {
 	data := LoadFile(log, file, true)
-	if err := yaml.Unmarshal(data, v); err != nil {
-		log.Fatalf("unmarshal file: %s", err.Error())
+	for _, v := range vs {
+		if err := yaml.Unmarshal(data, v); err != nil {
+			log.Fatalf("unmarshal file: %s", err.Error())
+		}
 	}
 }
 

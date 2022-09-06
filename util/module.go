@@ -5,12 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/azarc-io/action-module-scrape/temp/module_v1"
+	"google.golang.org/protobuf/types/known/structpb"
 	"net/http"
 )
 
 const (
 	readme = "readme.md"
 )
+
+type config struct {
+	Config map[string]interface{} `yaml:"config"`
+}
 
 //********************************************************************************************
 // MODULE
@@ -34,12 +39,18 @@ func LoadModule(log Logger, config *Config) *module_v1.Module {
 func loadSpark(log Logger, sparks *[]*module_v1.Spark) func(string, string) {
 	return func(path, name string) {
 		spark := module_v1.Spark{}
-		ParseYaml(log, fmt.Sprintf("%s/%s", path, "spark.yaml"), &spark)
+		cfg := config{}
+		var err error
+
+		ParseYaml(log, fmt.Sprintf("%s/%s", path, "spark.yaml"), &spark, &cfg)
+		if spark.Config, err = structpb.NewStruct(cfg.Config); err != nil {
+			log.Fatalf("unmarshalling config [spark]: %s, [err]: %s", name, err.Error())
+		}
 		spark.Name = name
 		spark.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
 		spark.Icon = LoadImage(log, fmt.Sprintf("%s/icon", path), false)
 		for _, input := range spark.Inputs {
-			input.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, string(input.Schema)))
+			input.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, input.Schema))
 		}
 		for _, output := range spark.Outputs {
 			if len(output.Schema) != 0 {
@@ -66,7 +77,13 @@ func LoadSparks(log Logger, config *Config) []*module_v1.Spark {
 func loadConnector(log Logger, connectors *[]*module_v1.Connector) func(string, string) {
 	return func(path, name string) {
 		connector := module_v1.Connector{}
-		ParseYaml(log, fmt.Sprintf("%s/%s", path, "connector.yaml"), &connector)
+		cfg := config{}
+		var err error
+
+		ParseYaml(log, fmt.Sprintf("%s/%s", path, "connector.yaml"), &connector, &cfg)
+		if connector.Config, err = structpb.NewStruct(cfg.Config); err != nil {
+			log.Fatalf("unmarshalling config [connector]: %s, [err]: %s", name, err.Error())
+		}
 		connector.Name = name
 		connector.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
 		connector.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, "schema.json"))
@@ -113,3 +130,7 @@ func SubmitAction(log Logger, config *Config, action *module_v1.Action) {
 	log.Infof("scraped and submitted for module [package]: %s, [version]: %s, [sparks]: %d, connectors: %d",
 		action.Module.Package, action.Module.Version, len(action.Sparks), len(action.Connectors))
 }
+
+//********************************************************************************************
+// HELPER
+//********************************************************************************************
