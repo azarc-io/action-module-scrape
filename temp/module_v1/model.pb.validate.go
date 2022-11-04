@@ -424,6 +424,17 @@ func (m *SparkInput) validate(all bool) error {
 
 	// no validation rules for Required
 
+	if _, ok := _SparkInput_Type_InLookup[m.GetType()]; !ok {
+		err := SparkInputValidationError{
+			field:  "Type",
+			reason: "value must be in list [object string boolean number]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return SparkInputMultiError(errors)
 	}
@@ -500,6 +511,13 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SparkInputValidationError{}
+
+var _SparkInput_Type_InLookup = map[string]struct{}{
+	"object":  {},
+	"string":  {},
+	"boolean": {},
+	"number":  {},
+}
 
 // Validate checks the field values on SparkOutput with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -966,7 +984,34 @@ func (m *Connector) validate(all bool) error {
 
 	// no validation rules for Readme
 
-	// no validation rules for Schema
+	if all {
+		switch v := interface{}(m.GetUi()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ConnectorValidationError{
+					field:  "Ui",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ConnectorValidationError{
+					field:  "Ui",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUi()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ConnectorValidationError{
+				field:  "Ui",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if all {
 		switch v := interface{}(m.GetIcon()).(type) {
@@ -991,6 +1036,35 @@ func (m *Connector) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return ConnectorValidationError{
 				field:  "Icon",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetIngress()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ConnectorValidationError{
+					field:  "Ingress",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ConnectorValidationError{
+					field:  "Ingress",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIngress()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ConnectorValidationError{
+				field:  "Ingress",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1073,6 +1147,224 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ConnectorValidationError{}
+
+// Validate checks the field values on ConnectorIngress with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ConnectorIngress) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConnectorIngress with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ConnectorIngressMultiError, or nil if none found.
+func (m *ConnectorIngress) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConnectorIngress) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Enabled
+
+	if _, ok := _ConnectorIngress_Type_InLookup[m.GetType()]; !ok {
+		err := ConnectorIngressValidationError{
+			field:  "Type",
+			reason: "value must be in list [http]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Port
+
+	if len(errors) > 0 {
+		return ConnectorIngressMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConnectorIngressMultiError is an error wrapping multiple validation errors
+// returned by ConnectorIngress.ValidateAll() if the designated constraints
+// aren't met.
+type ConnectorIngressMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConnectorIngressMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConnectorIngressMultiError) AllErrors() []error { return m }
+
+// ConnectorIngressValidationError is the validation error returned by
+// ConnectorIngress.Validate if the designated constraints aren't met.
+type ConnectorIngressValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConnectorIngressValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConnectorIngressValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConnectorIngressValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConnectorIngressValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConnectorIngressValidationError) ErrorName() string { return "ConnectorIngressValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ConnectorIngressValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConnectorIngress.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConnectorIngressValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConnectorIngressValidationError{}
+
+var _ConnectorIngress_Type_InLookup = map[string]struct{}{
+	"http": {},
+}
+
+// Validate checks the field values on ConnectorUI with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ConnectorUI) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConnectorUI with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ConnectorUIMultiError, or
+// nil if none found.
+func (m *ConnectorUI) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConnectorUI) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ConnectorUIMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConnectorUIMultiError is an error wrapping multiple validation errors
+// returned by ConnectorUI.ValidateAll() if the designated constraints aren't met.
+type ConnectorUIMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConnectorUIMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConnectorUIMultiError) AllErrors() []error { return m }
+
+// ConnectorUIValidationError is the validation error returned by
+// ConnectorUI.Validate if the designated constraints aren't met.
+type ConnectorUIValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConnectorUIValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConnectorUIValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConnectorUIValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConnectorUIValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConnectorUIValidationError) ErrorName() string { return "ConnectorUIValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ConnectorUIValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConnectorUI.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConnectorUIValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConnectorUIValidationError{}
 
 // Validate checks the field values on Action with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -1741,3 +2033,112 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MasterEntityValidationError{}
+
+// Validate checks the field values on ShortEntity with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ShortEntity) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ShortEntity with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ShortEntityMultiError, or
+// nil if none found.
+func (m *ShortEntity) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ShortEntity) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for AggregateVersion
+
+	// no validation rules for Package
+
+	// no validation rules for Label
+
+	// no validation rules for Description
+
+	if len(errors) > 0 {
+		return ShortEntityMultiError(errors)
+	}
+
+	return nil
+}
+
+// ShortEntityMultiError is an error wrapping multiple validation errors
+// returned by ShortEntity.ValidateAll() if the designated constraints aren't met.
+type ShortEntityMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ShortEntityMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ShortEntityMultiError) AllErrors() []error { return m }
+
+// ShortEntityValidationError is the validation error returned by
+// ShortEntity.Validate if the designated constraints aren't met.
+type ShortEntityValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ShortEntityValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ShortEntityValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ShortEntityValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ShortEntityValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ShortEntityValidationError) ErrorName() string { return "ShortEntityValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ShortEntityValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sShortEntity.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ShortEntityValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ShortEntityValidationError{}
