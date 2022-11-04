@@ -19,6 +19,13 @@ func TestLoadSpark(t *testing.T) {
 	assert.Equal(t, sparks[0].Config, pb)
 }
 
+func TestLoadConnector(t *testing.T) {
+	connectors := util.LoadConnectors(&testWrap{t: t}, &util.Config{Path: "test_files"})
+	pb, err := structpb.NewStruct(map[string]interface{}{"foo": "bar"})
+	assert.Nil(t, err)
+	assert.Equal(t, connectors[0].Config, pb)
+}
+
 //********************************************************************************************
 // FILE
 //********************************************************************************************

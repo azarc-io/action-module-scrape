@@ -86,7 +86,6 @@ func loadConnector(log Logger, connectors *[]*module_v1.Connector) func(string, 
 		}
 		connector.Name = name
 		connector.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", path, readme), false)
-		connector.Schema = LoadSchema(log, fmt.Sprintf("%s/%s", path, "schema.json"))
 		connector.Icon = LoadImage(log, fmt.Sprintf("%s/icon", path), false)
 		*connectors = append(*connectors, &connector)
 	}
