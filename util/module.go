@@ -29,6 +29,7 @@ func LoadModule(log Logger, config *Config) *module_v1.Module {
 	module.Icon = LoadImage(log, fmt.Sprintf("%s/icon", config.Path), false)
 	module.Readme = LoadFileString(log, fmt.Sprintf("%s/%s", config.Path, readme), false)
 	module.Licence = LoadFileString(log, fmt.Sprintf("%s/licence.txt", config.Path), false)
+	module.Resources = config.ResourcesAsMap()
 	return module
 }
 

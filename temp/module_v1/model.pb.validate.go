@@ -191,6 +191,10 @@ func (m *Module) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Readme
+
+	// no validation rules for Licence
+
 	if utf8.RuneCountInString(m.GetLabel()) < 1 {
 		err := ModuleValidationError{
 			field:  "Label",
@@ -211,6 +215,35 @@ func (m *Module) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetIcon()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ModuleValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ModuleValidationError{
+					field:  "Icon",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ModuleValidationError{
+				field:  "Icon",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	_Module_Tags_Unique := make(map[string]struct{}, len(m.GetTags()))
@@ -244,38 +277,7 @@ func (m *Module) validate(all bool) error {
 
 	}
 
-	// no validation rules for Readme
-
-	// no validation rules for Licence
-
-	if all {
-		switch v := interface{}(m.GetIcon()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ModuleValidationError{
-					field:  "Icon",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ModuleValidationError{
-					field:  "Icon",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ModuleValidationError{
-				field:  "Icon",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Resources
 
 	if len(errors) > 0 {
 		return ModuleMultiError(errors)
@@ -830,6 +832,8 @@ func (m *Spark) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Resources
+
 	if len(errors) > 0 {
 		return SparkMultiError(errors)
 	}
@@ -1070,6 +1074,8 @@ func (m *Connector) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for Resources
 
 	if len(errors) > 0 {
 		return ConnectorMultiError(errors)
