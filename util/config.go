@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 type (
@@ -14,11 +15,29 @@ type (
 		Token          string `env:"INPUT_TOKEN"`
 		Version        string `env:"INPUT_VERSION"`
 		SubmissionHost string `env:"INPUT_SUBMISSION_HOST"`
+		InputResources string `env:"INPUT_RESOURCES"`
 	}
 	ConfigLoader interface {
 		Getenv(key string) string
 	}
 )
+
+func (c *Config) ResourcesAsMap() map[string]string {
+	result := map[string]string{}
+	if c.InputResources != "" {
+		// split on new line
+		nls := strings.Split(strings.TrimSpace(c.InputResources), "\n")
+		for _, nl := range nls {
+			// split by first colon
+			parts := strings.SplitN(strings.TrimSpace(nl), ":", 2)
+			if len(parts) > 2 {
+				panic("invalid resource format, should be <resource>: <value> when a new line separating each resource")
+			}
+			result[parts[0]] = strings.ReplaceAll(parts[1], " ", "")
+		}
+	}
+	return result
+}
 
 func LoadConfig(log Logger, l ConfigLoader) *Config {
 	config := &Config{}

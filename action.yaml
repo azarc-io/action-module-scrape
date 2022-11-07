@@ -10,6 +10,9 @@ inputs:
   submission_host:
     required: true
     description: 'The module submission host'
+  resources:
+    required: true
+    description: 'Key value pairs representing 1 or more resource types. Eg. docker: uri'
 
 runs:
   using: composite
@@ -22,3 +25,4 @@ runs:
         INPUT_VERSION: ${{ inputs.version }}
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_SUBMISSION_HOST: ${{ inputs.submission_host }}
+        INPUT_RESOURCES: ${{ inputs.resources }}
